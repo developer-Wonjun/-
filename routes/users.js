@@ -9,7 +9,7 @@ const mailer = require('./mail');
 const senderInfo = require('../config/senderInfo.json');
 const jwt = require("jsonwebtoken");
 const jwtObj = require("../config/jwt");
-
+const bcrypt = require('bcrypt');
 
 router.get('/', async (req, res) => {
 
@@ -24,6 +24,41 @@ router.get('/', async (req, res) => {
     res.status(200).send(getResult);
   }
 });
+
+router.get('/email', async (req, res) => {
+
+  const getEmail = "SELECT email FROM user WHERE email=?";
+  const getEmailResult = await db.queryParam_Parse(getEmail, req.body.email);
+
+  if(!getEmailResult){
+    res.status(200).send("DB오류");
+  } else{
+    if (getEmailResult[0]==null) {
+      console.log("중복 없음");
+      res.status(200).send(req.body.email +'은 사용할 수 있는 이메일 입니다.');
+    }else{
+      res.status(200).send("중복된 이메일 입니다.");
+   }
+  }
+});
+
+router.get('/nickname', async (req, res) => {
+
+  const getNickname = "SELECT nickname FROM user WHERE nickname=?";
+  const getNicknameResult = await db.queryParam_Parse(getNickname, req.body.nickname);
+
+  if(!getNicknameResult){
+    res.status(200).send("DB오류");
+  } else{
+    if (getNicknameResult[0]==null) {
+      console.log("중복 없음");
+      res.status(200).send(req.body.nickname +'은 사용할 수 있는 닉네임 입니다.');
+    }else{
+      res.status(200).send("중복된 닉네임 입니다.");
+   }
+  }
+});
+
 
 router.post('/signup', async (req, res) => {
 
@@ -91,10 +126,11 @@ router.post('/password', async (req, res) => {
   } else { //쿼리문이 성공했을 때
 
     //f 추출
-    var random = Math.floor(Math.random() * 10000);
+    var random = Math.random().toString(36).substr(2,11);
+    const encryptedPassword = bcrypt.hashSync(random, 10);
 
     const getUpdate = "UPDATE myside.user SET password =? WHERE email =? AND name = ?";
-    const getResult = await db.queryParam_Parse(getUpdate, [random, req.body.email, req.body.name]);
+    const getResult = await db.queryParam_Parse(getUpdate, [encryptedPassword, req.body.email, req.body.name]);
 
     let email = req.body.email;
     var password = random;

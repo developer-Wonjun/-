@@ -15,10 +15,10 @@ const refreshOptions = {
 // 랜덤하게 나오는게 아니라 jwt signin으로 만들떄 
 module.exports = {
     sign: (user) => {
+        console.log(user);
         const payload = {
-            id: user.user_id,
-            pw: user.user_name,
-            idx: user.user_idx
+            id: user.user_id
+
         };
 
         const result = {
@@ -49,9 +49,8 @@ module.exports = {
     },
     refresh: (user) => {
         const payload = {
-            idx: user.idx,
-            grade: user.grade,
-            name: user.name
+            id: user.id,
+
         };
 
         return jwt.sign(payload, secretOrPrivateKey, options);

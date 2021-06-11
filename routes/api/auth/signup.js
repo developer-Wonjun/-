@@ -16,12 +16,15 @@ router.post('/signup', async (req, res) => {
     const getResult = await db.queryParam_Parse(getUser, req.body.email);
 
     if (getResult[0] == null) {
-        console.log("중복 없음");
         const Signup = "INSERT INTO user(email, password, name, phone, user_identity, nickname, cancer_kind, cancer_status, cancer_step, gender, age, height, weight, disease, disable_food) Values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         const SignupResult = await db.queryParam_Parse(Signup, [req.body.email, req.body.password, req.body.name, req.body.phone, req.body.user_identity, req.body.nickname, req.body.cancer_kind, req.body.cancer_status, req.body.cancer_step, req.body.gender, req.body.age, req.body.height, req.body.weight, req.body.disease, req.body.disable_food]);
-        res.status(200).send(SignupResult);
+        res.status(200).send(defaultRes.successTrue(statusCode.OK, "회원가입 성공", {
+
+        }))
     } else {
-        res.status(200).send("존재하는 이메일입니다.");
+        res.status(200).send(defaultRes.successTrue(statusCode.OK, "중복된 아이디가 있습니다.", {
+
+        }))
     }
 
 });

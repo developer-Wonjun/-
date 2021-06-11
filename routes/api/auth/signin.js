@@ -11,7 +11,7 @@ const db = require('../../../module/pool');
 const jwtUtils = require('../../../module/jwt');
 
 
-router.post('/login', async (req, res) => {
+router.post('/signin', async (req, res) => {
 
     console.log(req.body);
 
@@ -39,10 +39,10 @@ router.post('/login', async (req, res) => {
             console.log('토큰 생성됨:', token);
             const getToken = "UPDATE user SET token=? WHERE email=? ";
             const TokenResult = await db.queryParam_Parse(getToken, [token, req.body.email]);
-            res.status(200).send(TokenResult);
+            res.status(200).send(defaultRes.successTrue(statusCode.OK, "로그인 성공", {
 
+            }))
         }
-    }
+    };
 });
-
-module.exports = router;
+    module.exports = router;
